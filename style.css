@@ -194,10 +194,11 @@ h3 {
   display: none;
 }
 
-@media (max-width: 720px) {
-  .hero {
-    padding: 72px 0 56px;
+@media (max-width: 480px) {
+  .section {
+    padding: 48px 24px;
   }
+}
 
   .section {
     padding: 48px 24px;
