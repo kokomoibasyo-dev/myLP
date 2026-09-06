@@ -1,0 +1,1 @@
+window.AWAI_CONFIG = { formEndpoint: "https://script.google.com/macros/s/AKfycbxOkXOGDj-Kk_lRskFUuzvu8WR34yc5n2YUaEEeURkuIuMfdwv2v3c2-PWrinqdj_pX/exec", representativeName: "仲原英孝", contactEmail: "fire55hide@gmail.com" };
