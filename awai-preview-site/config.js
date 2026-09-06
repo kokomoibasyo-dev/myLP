@@ -1,7 +1,7 @@
 window.AWAI_CONFIG = { formEndpoint: "https://script.google.com/macros/s/AKfycbxOkXOGDj-Kk_lRskFUuzvu8WR34yc5n2YUaEEeURkuIuMfdwv2v3c2-PWrinqdj_pX/exec", representativeName: "仲原英孝", contactEmail: "fire55hide@gmail.com" };
 
 (() => {
-  // ここも公開ページと同様、ブラウザ側で読みやすさを調整できるよう文字サイズ切替を用意。
+  // ここも公開ページの読みやすさを参考に、和文フォントと文字サイズ切替を追加。
   const fontLink = document.createElement('link');
   fontLink.rel = 'stylesheet';
   fontLink.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600&family=Shippori+Mincho:wght@400;500;600&display=swap';
@@ -15,7 +15,7 @@ window.AWAI_CONFIG = { formEndpoint: "https://script.google.com/macros/s/AKfycbx
     html[data-font-size="large"]{font-size:18px}
     body{font-family:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
     h1,h2,h3,.brand-name,.hero-logo,.hero-descriptor,.hero-tagline,.hero-note p,.question-bubbles p,.dialogue-lead,.dialogue-quote,.about-copy blockquote,.ph-center,.ph-right,.profile-name,.contact-lead,.footer-brand{font-family:"Shippori Mincho","Yu Mincho","Hiragino Mincho ProN",serif}
-    .font-size-control{display:flex;align-items:center;gap:3px;margin-left:2px;padding:3px;border:1px solid rgba(23,41,60,.14);border-radius:999px;background:rgba(255,255,255,.62);white-space:nowrap}
+    .font-size-control{display:flex;align-items:center;gap:3px;margin-left:2px;padding:3px;border:1px solid rgba(23,41,60,.14);border-radius:999px;background:rgba(255,255,255,.72);white-space:nowrap}
     .font-size-label{font-size:.62rem;color:#697482;padding:0 5px 0 7px}
     .font-size-control button{appearance:none;border:0;background:transparent;color:#697482;font:inherit;font-size:.62rem;line-height:1;padding:7px 8px;border-radius:999px;cursor:pointer;transition:.2s ease}
     .font-size-control button:hover{background:rgba(34,60,85,.08);color:#17293c}
@@ -49,11 +49,11 @@ window.AWAI_CONFIG = { formEndpoint: "https://script.google.com/macros/s/AKfycbx
   apply(initial);
   document.querySelectorAll('[data-font-size]').forEach((button) => button.addEventListener('click', () => apply(button.dataset.fontSize)));
 
-  // Preview branch only: load sharper versions of the two large visual assets from chunked same-origin data.
-  // The production build will use normal optimized image files.
+  // Preview branch only: large visuals use higher-resolution WebP data assembled from same-origin chunks.
+  // Production will use ordinary optimized image files directly.
   async function loadDataUri(parts) {
     const texts = await Promise.all(parts.map(async (url) => {
-      const r = await fetch(url, { cache: 'force-cache' });
+      const r = await fetch(url, { cache: 'no-cache' });
       if (!r.ok) throw new Error(`asset ${r.status}`);
       return r.text();
     }));
@@ -62,13 +62,21 @@ window.AWAI_CONFIG = { formEndpoint: "https://script.google.com/macros/s/AKfycbx
 
   Promise.all([
     loadDataUri(['assets-hq/hero-dusk.1.txt','assets-hq/hero-dusk.2.txt']),
-    loadDataUri(['assets-hq/philosophy-blossom.1.txt','assets-hq/philosophy-blossom.2.txt'])
-  ]).then(([hero, philosophy]) => {
+    loadDataUri(['assets-hq/philosophy-blossom.1.txt','assets-hq/philosophy-blossom.2.txt']),
+    loadDataUri(['assets-hq/dialogue-room.1.txt','assets-hq/dialogue-room.2.txt','assets-hq/dialogue-room.3.txt'])
+  ]).then(([hero, philosophy, dialogue]) => {
     const heroEl = document.querySelector('.hero-scene');
     if (heroEl) heroEl.style.backgroundImage = `linear-gradient(90deg,rgba(247,244,239,.72) 0%,rgba(247,244,239,.5) 34%,rgba(25,45,63,.08) 64%,rgba(25,45,63,.2) 100%),url("${hero}")`;
+
+    const dialogueEl = document.querySelector('.dialogue');
+    if (dialogueEl) dialogueEl.style.backgroundImage = `linear-gradient(90deg,rgba(226,232,235,.93) 0%,rgba(238,236,231,.9) 52%,rgba(208,218,224,.78) 100%),url("${dialogue}")`;
+
     const ph = document.querySelector('.philosophy-art');
     if (ph) ph.style.backgroundImage = `linear-gradient(90deg,rgba(249,246,241,.18),rgba(28,48,66,.04)),url("${philosophy}")`;
+
     const cv2 = document.querySelector('.cv-2');
     if (cv2) cv2.style.backgroundImage = `linear-gradient(rgba(255,255,255,.04),rgba(23,41,60,.08)),url("${philosophy}")`;
+    const cv3 = document.querySelector('.cv-3');
+    if (cv3) cv3.style.backgroundImage = `linear-gradient(rgba(255,255,255,.02),rgba(23,41,60,.12)),url("${dialogue}")`;
   }).catch((err) => console.warn('HQ preview assets could not be loaded', err));
 })();
